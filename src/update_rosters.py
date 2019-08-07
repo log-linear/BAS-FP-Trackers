@@ -44,7 +44,7 @@ def main():
         # Fill in sheets for each grade level
         for grade_level in grade_levels:
             grade_sheet = tracker.worksheet_by_title(grade_level)
-            old_roster = grade_sheet.get_as_df(start='A2', end='S2002',
+            old_roster = grade_sheet.get_as_df(start='A2', end='U2002',
                                                include_tailing_empty=True)
             new_records = (
                 rosters.query(

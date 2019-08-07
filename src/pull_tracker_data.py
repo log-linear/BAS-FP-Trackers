@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 
 def main():
     (Path.cwd() / '../logs').mkdir(exist_ok=True)
-    logging.basicConfig(filename='../logs/roster_pulls.log',
+    logging.basicConfig(filename='../logs/tracker_data_pulls.log',
                         level=logging.INFO,
                         format='%(asctime)s: %(message)s')
     folder_id = '1wGf1rNKjFpdw9wFJbOlV-U0byotCP5AU'  # BAS/FP GDrive folder id
@@ -31,7 +31,7 @@ def main():
 
         for grade_sheet in tracker.worksheets():
             if grade_sheet.title not in ['Instructions', 'Data Validation']:
-                df = grade_sheet.get_as_df(start='A2', end='S2002',
+                df = grade_sheet.get_as_df(start='A2', end='U2002',
                                            include_tailing_empty=True)
                 df['Campus'] = campus
                 df['Grade Level'] = grade_sheet.title
