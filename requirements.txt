@@ -1,0 +1,4 @@
+pandas==0.25.0
+pygsheets
+pyodbc==4.0.27
+SQLAlchemy==1.3.6

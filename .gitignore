@@ -2,6 +2,7 @@
 *.csv
 *.xlsx
 *.docx
+*.twb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

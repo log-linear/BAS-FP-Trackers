@@ -1,6 +1,6 @@
 /*
     @author: vfaner
-    @description: Pull bas_fp_roster_19_20_STAGING table for Traacker updates
+    @description: Pull bas_fp_roster_19_20_STAGING table for Tracker updates
 */
 
 SELECT *
