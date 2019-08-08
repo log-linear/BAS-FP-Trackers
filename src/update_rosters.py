@@ -63,7 +63,7 @@ def main():
                     .replace('nan', np.nan)
             )
             grade_sheet.set_dataframe(updated_roster, start='A3',
-                                      copy_head=False)
+                                      copy_head=False, nan='')
 
             logging.info(f'{len(new_records)} new records loaded to '
                          f'{tracker_name}, grade {grade_level}')

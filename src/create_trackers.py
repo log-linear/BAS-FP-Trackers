@@ -38,7 +38,7 @@ def main():
 
             grade_sheet = tracker.worksheet_by_title(grade_level)
             grade_sheet.set_dataframe(current_roster, start='A3',
-                                      copy_head=False)
+                                      copy_head=False, nan='')
 
 
 if __name__ == '__main__':
