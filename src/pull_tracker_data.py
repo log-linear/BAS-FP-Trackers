@@ -4,7 +4,7 @@ import logging
 import pandas as pd
 import numpy as np
 import pygsheets
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, types
 
 
 def main():
@@ -24,6 +24,25 @@ def main():
                 'Infinity PS', 'Luna PS', 'Meridian PS', 'Mighty PS',
                 'Pinnacle PS', 'Summit PS', 'Triumph PS', 'White Rock Hills PS',
                 'Williams PS', 'Wisdom PS']
+    dtypes = {
+		'Status'		  : types.VARCHAR(),
+        'August Formal'   : types.VARCHAR(3),
+        '9-Sep'           : types.VARCHAR(3),
+        '23-Sep'          : types.VARCHAR(3),
+        '7-Oct'           : types.VARCHAR(3),
+        '21-Oct'          : types.VARCHAR(3),
+        '4-Nov'           : types.VARCHAR(3),
+        '18-Nov'          : types.VARCHAR(3),
+        'December Formal' : types.VARCHAR(3),
+        '3-Feb'           : types.VARCHAR(3),
+        '17-Feb'          : types.VARCHAR(3),
+        '2-Mar'           : types.VARCHAR(3),
+        '16-Mar'          : types.VARCHAR(3),
+        '30-Mar'          : types.VARCHAR(3),
+        '13-Apr'          : types.VARCHAR(3),
+        '27-Apr'          : types.VARCHAR(3),
+        'May Formal'      : types.VARCHAR(3),
+    }
 
     dfs = []
     for campus in campuses:
@@ -42,8 +61,9 @@ def main():
             .replace('', np.nan)
             .replace('nan', np.nan)
     )
+    
     master_df.to_sql('bas_fp_tracker_data_19_20', con=engine, schema='DAT',
-                     if_exists='replace', index=False)
+                     if_exists='replace', index=False, dtype=dtypes)
 
 
 if __name__ == '__main__':

@@ -21,24 +21,16 @@ def main():
 
     # Create campus trackers
     for campus in campuses:
-        grade_levels = rosters.query(
-            f'SchoolNameAbbreviated == "{campus}"'
-        )['GradeLevel'].unique()
+        current_roster = rosters.query(
+            f'SchoolNameAbbreviated == "{campus}" '
+        ).iloc[:, :4]
 
         tracker_name = f'{campus} 19-20 BAS/F&P Tracker'
         client.drive.copy_file(template_id, tracker_name, folder_id)
         tracker = client.open(tracker_name)
-
-        # Fill in sheets for each grade level
-        for grade_level in grade_levels:
-            current_roster = rosters.query(
-                    f'SchoolNameAbbreviated == "{campus}" '
-                    f'& `GradeLevel` == "{grade_level}"'
-                ).iloc[:, :4]
-
-            grade_sheet = tracker.worksheet_by_title(grade_level)
-            grade_sheet.set_dataframe(current_roster, start='A3',
-                                      copy_head=False, nan='')
+        roster_validation = tracker.worksheet_by_title('Roster Validation')
+        roster_validation.set_dataframe(current_roster, start='A2',
+                                        copy_head=False, nan='')
 
 
 if __name__ == '__main__':

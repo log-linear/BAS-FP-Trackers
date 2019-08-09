@@ -41,32 +41,30 @@ def main():
         tracker_name = f'{campus} 19-20 BAS/F&P Tracker'
         tracker = client.open(tracker_name)
 
-        # Fill in sheets for each grade level
-        for grade_level in grade_levels:
-            grade_sheet = tracker.worksheet_by_title(grade_level)
-            old_roster = grade_sheet.get_as_df(start='A2', end='U2002',
-                                               include_tailing_empty=True)
-            new_records = (
-                rosters.query(
-                    f'SchoolNameAbbreviated == "{campus}" '
-                    f'& `GradeLevel` == "{grade_level}"'
-                )
-                .iloc[:, :4]
-                .rename(columns={'TeacherNumber': 'Employee ID',
-                                 'TeacherName': 'Teacher Name',
-                                 'StudentName': 'Scholar Name'})
-            )
+        roster_validation = tracker.worksheet_by_title('Roster Validation')
 
-            updated_roster = (
-                pd.concat([old_roster, new_records], sort=False)
-                    .replace('', np.nan)
-                    .replace('nan', np.nan)
+        old_roster = roster_validation.get_as_df(start='A1', end='D12000',
+                                                 include_tailing_empty=True)
+        new_records = (
+            rosters.query(
+                f'SchoolNameAbbreviated == "{campus}" '
             )
-            grade_sheet.set_dataframe(updated_roster, start='A3',
-                                      copy_head=False, nan='')
+            .iloc[:, :4]
+            .rename(columns={'TeacherNumber': 'Employee ID',
+                             'TeacherName': 'Teacher Name',
+                             'StudentName': 'Scholar Name'})
+        )
 
-            logging.info(f'{len(new_records)} new records loaded to '
-                         f'{tracker_name}, grade {grade_level}')
+        updated_roster = (
+            pd.concat([old_roster, new_records], sort=False)
+                .replace('', np.nan)
+                .replace('nan', np.nan)
+        )
+
+        roster_validation.set_dataframe(updated_roster, start='A2',
+                                        copy_head=False, nan='')
+
+        logging.info(f'{len(new_records)} new records loaded to {tracker_name}')
 
 
 if __name__ == '__main__':
