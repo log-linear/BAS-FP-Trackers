@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+"""
+@author:        Victor Faner
+@date:          2019-08-12
+@description:   Pull data from Trackers into a single table to then be
+                loaded into SQL Server.
+"""
 from pathlib import Path
 import logging
 
@@ -12,7 +19,6 @@ def main():
     logging.basicConfig(filename='../logs/tracker_data_pulls.log',
                         level=logging.INFO,
                         format='%(asctime)s: %(message)s')
-    folder_id = '1wGf1rNKjFpdw9wFJbOlV-U0byotCP5AU'  # BAS/FP GDrive folder id
     client = pygsheets.authorize(
         '../client_secret_507650277646-89evt7ufgfmlrfci4043cthvlgi3jf0s.apps.googleusercontent.com.json'
     )

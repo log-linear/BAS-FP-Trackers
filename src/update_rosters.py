@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+"""
+@author:        Victor Faner
+@date:          2019-08-12
+@description:   Automatically update Trackers with most recent rosters
+                from vRoster.
+"""
 from pathlib import Path
 import logging
 
@@ -34,10 +41,6 @@ def main():
 
     # Create campus trackers
     for campus in campuses:
-        grade_levels = rosters.query(
-            f'SchoolNameAbbreviated == "{campus}"'
-        )['GradeLevel'].unique()
-
         tracker_name = f'{campus} 19-20 BAS/F&P Tracker'
         tracker = client.open(tracker_name)
 

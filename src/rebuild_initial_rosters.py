@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+"""
+@author:        Victor Faner
+@date:          2019-08-12
+@description:   Rebuild initial rosters in SQL Server. Useful when the
+                tracker needs to be modified.
+"""
 import pandas as pd
 from sqlalchemy import create_engine, types
 

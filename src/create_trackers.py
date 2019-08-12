@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+"""
+@author:        Victor Faner
+@date:          2019-08-12
+@description:   Script to create/populate the initial Trackers from a
+                pre-uploaded template. Should only need to run once at
+                the beginning of the school year, or if you are testing
+                the scripts out.
+"""
 import pandas as pd
 import pygsheets
 
@@ -9,8 +18,10 @@ def main():
                   '3': '3rd',
                   '4': '4th',
                   '5': '5th',}
-    folder_id = '1wGf1rNKjFpdw9wFJbOlV-U0byotCP5AU'  # BAS/FP GDrive folder id
-    template_id = '18XIK6-_xs0LEGaFZ1kGU-bsNXQwJ9WPNwKAyTHO19yY'
+
+    # GDrive IDs
+    folder_id = '1wGf1rNKjFpdw9wFJbOlV-U0byotCP5AU'  # Where trackers will be housed
+    template_id = '18XIK6-_xs0LEGaFZ1kGU-bsNXQwJ9WPNwKAyTHO19yY'  # template file
     client = pygsheets.authorize(
         '../client_secret_507650277646-89evt7ufgfmlrfci4043cthvlgi3jf0s.apps.googleusercontent.com.json'
     )
