@@ -3,6 +3,10 @@
     @description: Pull bas_fp_roster_19_20_STAGING table for Tracker updates
 */
 
-SELECT *
+SELECT DISTINCT *
 
-FROM ODS_CPS_STAGING.DAT.bas_fp_roster_19_20_STAGING
+FROM ODS_CPS.DAT.bas_fp_roster_19_20
+
+ORDER BY 
+    TeacherNumber
+    ,StudentID
