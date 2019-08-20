@@ -29,7 +29,7 @@ def main():
                 'Gradus PS', 'Grand PS', 'Hampton PS', 'Heights PS',
                 'Infinity PS', 'Luna PS', 'Meridian PS', 'Mighty PS',
                 'Pinnacle PS', 'Summit PS', 'Triumph PS', 'White Rock Hills PS',
-                'Williams PS', 'Wisdom PS']
+                'Williams PS', 'Wisdom PS', 'Uplift Lee PS']
     dtypes = {
 		'Status'		  : types.VARCHAR(),
         'August Formal'   : types.VARCHAR(3),
@@ -55,7 +55,8 @@ def main():
         tracker = client.open(f'{campus} 19-20 BAS/F&P Tracker')
 
         for grade_sheet in tracker.worksheets():
-            if grade_sheet.title not in ['Instructions', 'Data Validation']:
+            if grade_sheet.title not in ['Instructions', 'Data Validation',
+                                         'Roster Validation']:
                 df = grade_sheet.get_as_df(start='A2', end='U2002',
                                            include_tailing_empty=True)
                 df['Campus'] = campus
