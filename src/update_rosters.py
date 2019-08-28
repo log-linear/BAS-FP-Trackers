@@ -32,13 +32,13 @@ def main():
         r'mssql+pyodbc://sql-cl-dw-pro\datawarehouse/ODS_CPS_STAGING?driver=SQL+Server'
     )
 
-    with open('../queries/pull_staging_roster.sql', 'r') as fp:
+    with open('../queries/pull_updated_roster.sql', 'r') as fp:
         sql = fp.read()
 
     rosters = pd.read_sql(sql, engine).astype(str)
     rosters = rosters.replace(grade_dict)
     campuses = rosters['SchoolNameAbbreviated'].unique()
-
+    
     # Create campus trackers
     for campus in campuses:
         tracker_name = f'{campus} 19-20 BAS/F&P Tracker'
@@ -46,9 +46,7 @@ def main():
 
         roster_validation = tracker.worksheet_by_title('Roster Validation')
 
-        old_roster = roster_validation.get_as_df(start='A1', end='D12000',
-                                                 include_tailing_empty=True)
-        new_records = (
+        updated_roster = (
             rosters.query(
                 f'SchoolNameAbbreviated == "{campus}" '
             )
@@ -58,17 +56,12 @@ def main():
                              'StudentName': 'Scholar Name'})
         )
 
-        updated_roster = (
-            pd.concat([old_roster, new_records], sort=False)
-                .replace('', np.nan)
-                .replace('nan', np.nan)
-        )
-
         roster_validation.set_dataframe(updated_roster, start='A2',
                                         copy_head=False, nan='')
 
-        logging.info(f'{len(new_records)} new records loaded to {tracker_name}')
+        logging.info(f'{len(updated_roster)} new records loaded to {tracker_name}')
 
 
 if __name__ == '__main__':
     main()
+
