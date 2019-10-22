@@ -29,7 +29,7 @@ def main():
         '../client_secret_507650277646-89evt7ufgfmlrfci4043cthvlgi3jf0s.apps.googleusercontent.com.json'
     )
     engine = create_engine(
-        r'mssql+pyodbc://sql-cl-dw-pro\datawarehouse/ODS_CPS_STAGING?driver=SQL+Server'
+        r'mssql+pyodbc://TLXSQLPROD-01/ODS_CPS_STAGING?driver=SQL+Server'
     )
 
     with open('../queries/pull_updated_roster.sql', 'r') as fp:
@@ -54,14 +54,19 @@ def main():
             .rename(columns={'TeacherNumber': 'Employee ID',
                              'TeacherName': 'Teacher Name',
                              'StudentName': 'Scholar Name'})
+            .sort_values(by=['Employee ID', 'StudentID'])
         )
-
-        roster_validation.set_dataframe(updated_roster, start='A2',
-                                        copy_head=False, nan='')
-
+         
+        teachers = updated_roster[['Employee ID', 'Teacher Name']].drop_duplicates()
+        scholars = updated_roster[['StudentID', 'Scholar Name']].drop_duplicates()
+        
+        roster_validation.set_dataframe(teachers, start='A2',
+                                        copy_head=True, nan='')
+        roster_validation.set_dataframe(scholars, start='C2',
+                                        copy_head=True, nan='')
+                                        
         logging.info(f'{len(updated_roster)} new records loaded to {tracker_name}')
 
 
 if __name__ == '__main__':
     main()
-
