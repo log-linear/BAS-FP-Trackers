@@ -23,7 +23,8 @@ def main():
         '../client_secret_507650277646-89evt7ufgfmlrfci4043cthvlgi3jf0s.apps.googleusercontent.com.json'
     )
     engine = create_engine(
-        r'mssql+pyodbc://TLXSQLPROD-01/ODS_CPS?driver=SQL+Server'
+        r'mssql+pyodbc://TLXSQLPROD-01/ODS_CPS?driver=ODBC+Driver+13+for+SQL+Server',
+        fast_executemany=True  # Faster loads - for SQLAlchemy 1.3+ ONLY
     )
     campuses = ['North Hills PS', 'Peak PS', 'Ascend PS', 'Elevate PS',
                 'Gradus PS', 'Grand PS', 'Hampton PS', 'Heights PS',
@@ -31,23 +32,23 @@ def main():
                 'Pinnacle PS', 'Triumph PS', 'White Rock Hills PS',
                 'Williams PS', 'Wisdom PS', 'Uplift Lee PS', 'Summit PS']
     dtypes = {
-		'Status'		  : types.VARCHAR(),
-        'August Formal'   : types.VARCHAR(3),
-        '9-Sep'           : types.VARCHAR(3),
-        '23-Sep'          : types.VARCHAR(3),
-        '7-Oct'           : types.VARCHAR(3),
-        '21-Oct'          : types.VARCHAR(3),
-        '4-Nov'           : types.VARCHAR(3),
-        '18-Nov'          : types.VARCHAR(3),
-        'December Formal' : types.VARCHAR(3),
-        '3-Feb'           : types.VARCHAR(3),
-        '17-Feb'          : types.VARCHAR(3),
-        '2-Mar'           : types.VARCHAR(3),
-        '16-Mar'          : types.VARCHAR(3),
-        '30-Mar'          : types.VARCHAR(3),
-        '13-Apr'          : types.VARCHAR(3),
-        '27-Apr'          : types.VARCHAR(3),
-        'May Formal'      : types.VARCHAR(3),
+        'Status'		: types.VARCHAR(),
+        'August Formal'  : types.VARCHAR(3),
+        '9-Sep'          : types.VARCHAR(3),
+        '23-Sep'         : types.VARCHAR(3),
+        '7-Oct'          : types.VARCHAR(3),
+        '21-Oct'         : types.VARCHAR(3),
+        '4-Nov'          : types.VARCHAR(3),
+        '18-Nov'         : types.VARCHAR(3),
+        'December Formal': types.VARCHAR(3),
+        '3-Feb'          : types.VARCHAR(3),
+        '17-Feb'         : types.VARCHAR(3),
+        '2-Mar'          : types.VARCHAR(3),
+        '16-Mar'         : types.VARCHAR(3),
+        '30-Mar'         : types.VARCHAR(3),
+        '13-Apr'         : types.VARCHAR(3),
+        '27-Apr'         : types.VARCHAR(3),
+        'May Formal'     : types.VARCHAR(3),
     }
 
     dfs = []
@@ -129,7 +130,7 @@ def main():
                             '27-Apr',
                             'May Formal'])  # Remove rows with no data
     )
-    
+
     master_df.to_sql('bas_fp_tracker_data_19_20', con=engine, schema='DAT',
                      if_exists='replace', index=False, dtype=dtypes)
 
