@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-@author:        Victor Faner
-@date:          2019-08-12
-@description:   Automatically update Trackers with most recent rosters
-                from vRoster.
+author:        Victor Faner
+date:          2019-08-12
+description:   Automatically update Trackers with most recent rosters
+               from vRoster.
 """
 from pathlib import Path
-import logging
 
 import numpy as np
 import pandas as pd
@@ -15,10 +14,6 @@ from sqlalchemy import create_engine
 
 
 def main():
-    (Path.cwd() / '../logs').mkdir(exist_ok=True)
-    logging.basicConfig(filename='../logs/roster_updates.log',
-                        level=logging.INFO,
-                        format='%(asctime)s: %(message)s')
     grade_dict = {'0': 'Kinder',
                   '1': '1st',
                   '2': '2nd',
@@ -58,8 +53,6 @@ def main():
 
         roster_validation.set_dataframe(updated_roster, start='A2',
                                         copy_head=False, nan='')
-
-        logging.info(f'{len(updated_roster)} new records loaded to {tracker_name}')
 
 
 if __name__ == '__main__':

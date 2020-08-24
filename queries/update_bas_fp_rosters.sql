@@ -1,7 +1,7 @@
 /*
-    @author: vfaner
-    @date: 2019-08-05
-    @description: Stored proc for updating BAS/F&P production roster table
+    author: vfaner
+    date: 2019-08-05
+    description: Stored proc for updating BAS/F&P production roster table
 */
 
 --------------------------------------------------------------------------------
@@ -33,15 +33,14 @@ ORDER BY
 --------------------------------------------------------------------------------
 --  Find unmatched rows and add to staging roster table
 --------------------------------------------------------------------------------
-IF OBJECT_ID('ODS_CPS_STAGING.DAT.bas_fp_roster_19_20_STAGING') IS NOT NULL DROP TABLE ODS_CPS_STAGING.DAT.bas_fp_roster_19_20_STAGING
-
+DROP TABLE IF EXISTS ODS_CPS_STAGING.DAT.bas_fp_roster_20_21_STAGING
 SELECT #roster.*
 
-INTO ODS_CPS_STAGING.DAT.bas_fp_roster_19_20_STAGING
+INTO ODS_CPS_STAGING.DAT.bas_fp_roster_20_21_STAGING
 
 FROM #roster
     
-    LEFT JOIN ODS_CPS.DAT.bas_fp_roster_19_20 AS basfp
+    LEFT JOIN ODS_CPS.DAT.bas_fp_roster_20_21 AS basfp
         ON ISNULL(#roster.TeacherNumber, 0)           = ISNULL(basfp.TeacherNumber, 0)
         AND ISNULL(#roster.TeacherName, '')           = ISNULL(basfp.TeacherName, '')
         AND ISNULL(#roster.StudentID, 0)              = ISNULL(basfp.StudentID, 0)
@@ -62,8 +61,8 @@ WHERE
 --------------------------------------------------------------------------------
 --  Add unmatched rows to production table
 --------------------------------------------------------------------------------
-INSERT INTO ODS_CPS.DAT.bas_fp_roster_19_20
+INSERT INTO ODS_CPS.DAT.bas_fp_roster_20_21
 
 SELECT *
 
-FROM ODS_CPS_STAGING.DAT.bas_fp_roster_19_20_STAGING
+FROM ODS_CPS_STAGING.DAT.bas_fp_roster_20_21_STAGING

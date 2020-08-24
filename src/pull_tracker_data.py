@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-@author:        Victor Faner
-@date:          2019-08-12
-@description:   Pull data from Trackers into a single table to then be
-                loaded into SQL Server.
+author:        Victor Faner
+date:          2019-08-12
+description:   Pull data from Trackers into a single table to then be
+               loaded into SQL Server.
 """
 from pathlib import Path
-import logging
 
 import pandas as pd
 import numpy as np
@@ -15,21 +14,33 @@ from sqlalchemy import create_engine, types
 
 
 def main():
-    (Path.cwd() / '../logs').mkdir(exist_ok=True)
-    logging.basicConfig(filename='../logs/tracker_data_pulls.log',
-                        level=logging.INFO,
-                        format='%(asctime)s: %(message)s')
     client = pygsheets.authorize(
         '../client_secret_507650277646-89evt7ufgfmlrfci4043cthvlgi3jf0s.apps.googleusercontent.com.json'
     )
     engine = create_engine(
         r'mssql+pyodbc://sql-cl-dw-pro\datawarehouse/ODS_CPS?driver=SQL+Server'
     )
-    campuses = ['North Hills PS', 'Peak PS', 'Ascend PS', 'Elevate PS',
-                'Gradus PS', 'Grand PS', 'Hampton PS', 'Heights PS',
-                'Infinity PS', 'Luna PS', 'Meridian PS', 'Mighty PS',
-                'Pinnacle PS', 'Triumph PS', 'White Rock Hills PS',
-                'Williams PS', 'Wisdom PS', 'Uplift Lee PS', 'Summit PS']
+    campuses = [
+        'North Hills PS',
+        'Peak PS',
+        'Ascend PS',
+        'Elevate PS',
+        'Gradus PS',
+        'Grand PS',
+        'Hampton PS',
+        'Heights PS',
+        'Infinity PS',
+        'Luna PS',
+        'Meridian PS',
+        'Mighty PS',
+        'Pinnacle PS',
+        'Triumph PS',
+        'White Rock Hills PS',
+        'Williams PS',
+        'Wisdom PS',
+        'Uplift Delmas Morton PS',
+        'Summit PS'
+    ]
     dtypes = {
 		'Status'		 : types.VARCHAR(),
         'August Formal'  : types.VARCHAR(3),
@@ -52,7 +63,7 @@ def main():
 
     dfs = []
     for campus in campuses:
-        tracker = client.open(f'{campus} 19-20 BAS/F&P Tracker')
+        tracker = client.open(f'{campus} 20-21 BAS/F&P Tracker')
 
         for grade_sheet in tracker.worksheets():
             if grade_sheet.title not in ['Instructions', 'Data Validation',
@@ -130,7 +141,7 @@ def main():
                             'May Formal'])  # Remove rows with no data
     )
     
-    master_df.to_sql('bas_fp_tracker_data_19_20', con=engine, schema='DAT',
+    master_df.to_sql('bas_fp_tracker_data_20_21', con=engine, schema='DAT',
                      if_exists='replace', index=False, dtype=dtypes)
 
 
