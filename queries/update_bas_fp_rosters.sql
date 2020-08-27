@@ -13,7 +13,7 @@ SELECT
     ,SchoolNameAbbreviated
     ,TeacherName
     ,GradeLevel
-    ,TeacherID
+    ,TeacherNumber
     ,SchoolEntryDate
     ,SchoolExitDate
     ,StudentEnrollDate
@@ -56,7 +56,7 @@ UNION
 
 -- Teachers
 SELECT DISTINCT
-    CAST(CAST(TeacherID AS INT) AS VARCHAR) + ' | ' + TeacherName AS person_id
+    CAST(TeacherNumber AS VARCHAR) + ' | ' + TeacherName AS person_id
 
     -- Normalize Lee/Delmas
     ,CASE
