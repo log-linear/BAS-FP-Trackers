@@ -17,7 +17,7 @@ SELECT
     ,SchoolNameAbbreviated
     ,TeacherName
     ,GradeLevel
-    ,TeacherID
+    ,TeacherNumber
     ,SchoolEntryDate
     ,SchoolExitDate
     ,StudentEnrollDate
@@ -28,6 +28,7 @@ INTO #vRoster
 FROM ODS_CPS.RPT.vRoster
 WHERE YearID = 30
 
+SELECT * FROM #vRoster WHERE TeacherName LIKE '%farah, zainab%'
 -- Create Roster Table
 DROP TABLE IF EXISTS ODS_CPS.DAT.bas_fp_roster_20_21
 CREATE TABLE ODS_CPS.DAT.bas_fp_roster_20_21 (
@@ -65,7 +66,7 @@ UNION
 
 -- Teachers
 SELECT DISTINCT
-    CAST(CAST(TeacherID AS INT) AS VARCHAR) + ' | ' + TeacherName AS person_id
+    CAST(CAST(TeacherNumber AS INT) AS VARCHAR) + ' | ' + TeacherName AS person_id
 
     -- Normalize Lee/Delmas
     ,CASE
