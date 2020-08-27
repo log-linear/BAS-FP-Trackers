@@ -14,45 +14,40 @@ from sqlalchemy import create_engine
 
 
 def main():
-    grade_dict = {'0': 'Kinder',
-                  '1': '1st',
-                  '2': '2nd',
-                  '3': '3rd',
-                  '4': '4th',
-                  '5': '5th'}
     client = pygsheets.authorize(
-        '../client_secret_507650277646-89evt7ufgfmlrfci4043cthvlgi3jf0s.apps.googleusercontent.com.json'
+        '../client_secret_306687575540-dgtvvmcmk3flnvig5mt1j7gk21s5087c.apps.googleusercontent.com.json'
     )
+
+    # Read rosters from SQL
     engine = create_engine(
-        r'mssql+pyodbc://sql-cl-dw-pro\datawarehouse/ODS_CPS_STAGING?driver=SQL+Server'
+        r'mssql+pyodbc://TLXSQLPROD-01/ODS_CPS?driver=ODBC+Driver+13+for+SQL+Server',
+        fast_executemany=True  # Faster loads - for SQLAlchemy 1.3+ ONLY
+    )
+    rosters = pd.read_sql(
+        'SELECT * FROM ODS_CPS.DAT.bas_fp_roster_20_21',
+        con=engine
     )
 
-    with open('../queries/pull_updated_roster.sql', 'r') as fp:
-        sql = fp.read()
-
-    rosters = pd.read_sql(sql, engine).astype(str)
-    rosters = rosters.replace(grade_dict)
+    # Loop through and update each tracker
     campuses = rosters['SchoolNameAbbreviated'].unique()
-    
-    # Create campus trackers
+
     for campus in campuses:
-        tracker_name = f'{campus} 19-20 BAS/F&P Tracker'
+        current_roster = rosters[rosters['SchoolNameAbbreviated'] == campus]
+
+        # Separate scholars and teachers into separate dataframes
+        scholars = current_roster[current_roster['is_scholar'] == 1].iloc[:, [0]]
+        teachers = current_roster[current_roster['is_scholar'] == 0].iloc[:, [0]]
+
+        # Open tracker
+        tracker_name = f'{campus} 20-21 BAS/F&P Tracker'
         tracker = client.open(tracker_name)
 
-        roster_validation = tracker.worksheet_by_title('Roster Validation')
-
-        updated_roster = (
-            rosters.query(
-                f'SchoolNameAbbreviated == "{campus}" '
-            )
-            .iloc[:, :4]
-            .rename(columns={'TeacherNumber': 'Employee ID',
-                             'TeacherName': 'Teacher Name',
-                             'StudentName': 'Scholar Name'})
-        )
-
-        roster_validation.set_dataframe(updated_roster, start='A2',
-                                        copy_head=False, nan='')
+        # Fill in Data Validation fields
+        data_validation = tracker.worksheet_by_title('Data Validation')
+        data_validation.set_dataframe(teachers, start='C2', copy_head=False,
+                                      extend=True, nan='')
+        data_validation.set_dataframe(scholars, start='D2', copy_head=False,
+                                      extend=True, nan='',)
 
 
 if __name__ == '__main__':
