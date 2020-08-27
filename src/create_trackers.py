@@ -18,7 +18,7 @@ def main():
     folder_id = '1349q9kxsZAd_LGZ-GuItnAMDYJYTety_'  # Where trackers will be housed
     template_id = '17UIEnwv8-qfQ_37r84o0uDGoOw_Ccpim7fxN4Qbpw00'  # template file
     client = pygsheets.authorize(
-        '../client_secret_507650277646-89evt7ufgfmlrfci4043cthvlgi3jf0s.apps.googleusercontent.com.json'
+        '../client_secret_306687575540-dgtvvmcmk3flnvig5mt1j7gk21s5087c.apps.googleusercontent.com.json'
     )
 
     # Read rosters from SQL
