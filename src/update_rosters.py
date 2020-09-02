@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-@author:        Victor Faner
-@date:          2019-08-12
-@description:   Automatically update Trackers with most recent rosters
-                from vRoster.
+author:        Victor Faner
+date:          2019-08-12
+description:   Automatically update Trackers with most recent rosters
+               from vRoster.
 """
 from pathlib import Path
-import logging
 
 import numpy as np
 import pandas as pd
@@ -15,57 +14,33 @@ from sqlalchemy import create_engine
 
 
 def main():
-    (Path.cwd() / '../logs').mkdir(exist_ok=True)
-    logging.basicConfig(filename='../logs/roster_updates.log',
-                        level=logging.INFO,
-                        format='%(asctime)s: %(message)s')
-    grade_dict = {'0': 'Kinder',
-                  '1': '1st',
-                  '2': '2nd',
-                  '3': '3rd',
-                  '4': '4th',
-                  '5': '5th'}
     client = pygsheets.authorize(
-        '../client_secret_507650277646-89evt7ufgfmlrfci4043cthvlgi3jf0s.apps.googleusercontent.com.json'
+        '../client_secret_306687575540-dgtvvmcmk3flnvig5mt1j7gk21s5087c.apps.googleusercontent.com.json'
     )
+
+    # Read rosters from SQL
     engine = create_engine(
-        r'mssql+pyodbc://TLXSQLPROD-01/ODS_CPS_STAGING?driver=SQL+Server'
+        r'mssql+pyodbc://TLXSQLPROD-01/ODS_CPS?driver=ODBC+Driver+13+for+SQL+Server',
+        fast_executemany=True  # Faster loads - for SQLAlchemy 1.3+ ONLY
     )
+    rosters = pd.read_sql(
+        'SELECT * FROM ODS_CPS.DAT.bas_fp_roster_20_21',
+        con=engine
 
-    with open('../queries/pull_updated_roster.sql', 'r') as fp:
-        sql = fp.read()
+        # Separate scholars and teachers into separate dataframes
+        scholars = current_roster[current_roster['is_scholar'] == 1].iloc[:, [0]]
+        teachers = current_roster[current_roster['is_scholar'] == 0].iloc[:, [0]]
 
-    rosters = pd.read_sql(sql, engine).astype(str)
-    rosters = rosters.replace(grade_dict)
-    campuses = rosters['SchoolNameAbbreviated'].unique()
-    
-    # Create campus trackers
-    for campus in campuses:
-        tracker_name = f'{campus} 19-20 BAS/F&P Tracker'
+        # Open tracker
+        tracker_name = f'{campus} 20-21 BAS/F&P Tracker'
         tracker = client.open(tracker_name)
 
-        roster_validation = tracker.worksheet_by_title('Roster Validation')
-
-        updated_roster = (
-            rosters.query(
-                f'SchoolNameAbbreviated == "{campus}" '
-            )
-            .iloc[:, :4]
-            .rename(columns={'TeacherNumber': 'Employee ID',
-                             'TeacherName': 'Teacher Name',
-                             'StudentName': 'Scholar Name'})
-            .sort_values(by=['Employee ID', 'StudentID'])
-        )
-         
-        teachers = updated_roster[['Employee ID', 'Teacher Name']].drop_duplicates()
-        scholars = updated_roster[['StudentID', 'Scholar Name']].drop_duplicates()
-        
-        roster_validation.set_dataframe(teachers, start='A2',
-                                        copy_head=True, nan='')
-        roster_validation.set_dataframe(scholars, start='C2',
-                                        copy_head=True, nan='')
-                                        
-        logging.info(f'{len(updated_roster)} new records loaded to {tracker_name}')
+        # Fill in Data Validation fields
+        data_validation = tracker.worksheet_by_title('Data Validation')
+        data_validation.set_dataframe(teachers, start='C2', copy_head=False,
+                                      extend=True, nan='')
+        data_validation.set_dataframe(scholars, start='D2', copy_head=False,
+                                      extend=True, nan='',)
 
 
 if __name__ == '__main__':

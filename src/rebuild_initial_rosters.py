@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-@author:        Victor Faner
-@date:          2019-08-12
-@description:   Rebuild initial rosters in SQL Server. Useful when the
-                tracker needs to be modified.
+author:        Victor Faner
+date:          2019-08-12
+description:   Rebuild initial rosters in SQL Server. Useful when the
+               tracker needs to be modified.
 """
 import pandas as pd
 from sqlalchemy import create_engine, types
@@ -23,7 +23,7 @@ def main():
         'TeacherEmail': types.VARCHAR(360),
     }
     rosters = pd.read_csv('../data/initial_rosters_20190806.csv', dtype=str)
-    rosters.to_sql('bas_fp_roster_19_20', con=engine, schema='DAT',
+    rosters.to_sql('bas_fp_roster_20_21', con=engine, schema='DAT',
                    if_exists='replace', index=False, dtype=dtypes, )
 
 
