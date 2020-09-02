@@ -26,13 +26,6 @@ def main():
     rosters = pd.read_sql(
         'SELECT * FROM ODS_CPS.DAT.bas_fp_roster_20_21',
         con=engine
-    )
-
-    # Loop through and update each tracker
-    campuses = rosters['SchoolNameAbbreviated'].unique()
-
-    for campus in campuses:
-        current_roster = rosters[rosters['SchoolNameAbbreviated'] == campus]
 
         # Separate scholars and teachers into separate dataframes
         scholars = current_roster[current_roster['is_scholar'] == 1].iloc[:, [0]]
@@ -52,4 +45,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

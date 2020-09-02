@@ -67,11 +67,12 @@ def main():
 
         # Loop through each Grade level sheet
         for grade_sheet in tracker.worksheets():
-            if grade_sheet.title not in ['Instructions', 'Data Validation']:
+            if grade_sheet.title in ['Kinder', '1st', '2nd', '3rd', '4th', '5th']:
                 df = grade_sheet.get_as_df(start='A2', end='U2002',
                                            include_tailing_empty=True)
                 df['Campus'] = campus
                 df['Grade Level'] = grade_sheet.title
+
                 df = df[
                     'Teacher',
                     'Scholar',
@@ -98,6 +99,7 @@ def main():
 
     master_df = (
         pd.concat(dfs, sort=False).astype(str)
+
             .replace(r'|'  # Handle NaN/None/NULL values
                      r'nan|'
                      r'None|'
@@ -132,6 +134,7 @@ def main():
     )
     
     master_df.to_sql('bas_fp_tracker_data_20_21', con=engine, schema='DAT',
+
                      if_exists='replace', index=False, dtype=dtypes)
 
 
